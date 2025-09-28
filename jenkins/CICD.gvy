@@ -5,7 +5,7 @@ pipeline {
             steps {
                 // Step 1: Compile the code
                 echo 'compiling..'
-                git url: 'https://github.com/lerndevops/samplejavaapp', branch: 'main'
+                git url: 'https://github.com/Akindex5427/devops_PGP_project.git', branch: 'main'
                 sh script: '/opt/maven/bin/mvn compile'
             }
         }
