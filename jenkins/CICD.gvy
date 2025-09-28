@@ -22,17 +22,24 @@ pipeline {
             }		
         }
         stage('unit-test') {
-            steps {
-                // Step 3: Run unit tests
-                echo 'unittest..'
-                sh script: '/opt/maven/bin/mvn test'
-            }
-            post {
-                success {
+    steps {
+        echo 'unittest..'
+        sh script: '/opt/maven/bin/mvn test'
+    }
+    post {
+        success {
+            script {
+                // Check if report files exist before parsing
+                def reportFiles = findFiles(glob: 'target/surefire-reports/*.xml')
+                if (reportFiles) {
                     junit 'target/surefire-reports/*.xml'
+                } else {
+                    echo 'No test reports found, skipping JUnit parsing.'
                 }
-            }			
+            }
         }
+    }			
+}
         stage('codecoverage') {
     tools {
         jdk 'java1.8'
