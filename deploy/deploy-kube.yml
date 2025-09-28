@@ -3,26 +3,26 @@
   tasks: 
     - name: Deploying Application pods...
       shell: | 
-         if [ `kubectl get deployment | grep -v NAME | awk '{print $1}' | grep sampleapp | wc -l` -gt 0 ]; then  
+         if [ `kubectl get deployment | grep -v NAME | awk '{print $1}' | grep abctech | wc -l` -gt 0 ]; then  
             echo "deleteing previous application deployment"
-            kubectl delete deployment `kubectl get deployment | grep -v NAME | awk '{print $1}' | grep sampleapp`
+            kubectl delete deployment `kubectl get deployment | grep -v NAME | awk '{print $1}' | grep abctech`
             echo "creating new application deployment"
-            kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
+            kubectl create deployment sampleapp --image=FisayoAkinde/abctech:{{ build }}
          else 
-            echo "Deploying Sampleapp Application"
-            kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
+            echo "Deploying ABCTech Application"
+            kubectl create deployment abctech --image=FisayoAkinde/abctech:{{ build }}
          fi
     - name: deploying service
       shell: |
-         if [ `kubectl get svc | grep sampleapp  | awk '{print $1}' | wc -l` -gt 0 ]; then
+         if [ `kubectl get svc | grep abctech  | awk '{print $1}' | wc -l` -gt 0 ]; then
             echo "app service found, No actions taken"
-            #kubectl delete svc `kubectl get svc | grep sampleapp | awk '{print $1}'`
+            #kubectl delete svc `kubectl get svc | grep abctech | awk '{print $1}'`
          else
             echo "Creating App Services"
-            kubectl expose deployment sampleapp --name sampleapp --type NodePort --port 80 --target-port 8080
+            kubectl expose deployment abctech --name abctech --type NodePort --port 80 --target-port 8080
          fi
     - name: increase replicas 
-      shell: kubectl scale deploy sampleapp --replicas=2
+      shell: kubectl scale deploy abctech --replicas=2
       
     #- name: deploy app
     #  shell: kubectl create deployment sampleapp --image=lerndevops/samplejavaapp:{{ build }}
