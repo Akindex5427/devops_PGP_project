@@ -5,7 +5,7 @@ pipeline {
             steps {
                 // Step 1: Compile the code
                 echo 'compiling..'
-                git url: 'https://github.com/Akindex5427/devops_PGP_project.git', branch: 'main'
+                git url: 'https://github.com/lerndevops/samplejavaapp', branch: 'main'
                 sh script: '/opt/maven/bin/mvn compile'
             }
         }
@@ -34,9 +34,13 @@ pipeline {
             }			
         }
         stage('codecoverage') {
+            tools {
+                jdk 'java1.8'
+            }
             steps {
-                echo 'codecoverage...'
-                sh script: '/opt/maven/bin/mvn verify' // Fixed path typo
+                // Step 4: Generate code coverage
+                echo 'codecoverage..'
+                sh script: '/opt/maven/bin/mvn cobertura:cobertura -Dcobertura.report.format=xml' // Fixed path
             }
             post {
                 success {
@@ -54,7 +58,8 @@ pipeline {
         stage('build & push docker image') {
             steps {
                 withDockerRegistry(credentialsId: 'DOCKER_HUB_LOGIN', url: 'https://index.docker.io/v1/') {
-                    sh script: 'cd $WORKSPACE' // Ensure WORKSPACE is used correctly
+                    // Note: cd $WORKSPACE is redundant but kept as comment for clarity if Dockerfile relies on it
+                    // sh script: 'cd ${WORKSPACE}'
                     sh script: "docker build --file Dockerfile --tag docker.io/FisayoAkinde/abctech:\${BUILD_NUMBER} ."
                     sh script: "docker push docker.io/FisayoAkinde/abctech:\${BUILD_NUMBER}"
                 }	
@@ -62,7 +67,7 @@ pipeline {
         }
         stage('deploy-QA') {
             steps {
-                sh script: "sudo ansible-playbook --inventory /tmp/myinv \$WORKSPACE/deploy/deploy-kube.yml --extra-vars \"env=qa build=\${BUILD_NUMBER}\""
+                sh script: "sudo ansible-playbook --inventory /tmp/myinv \${WORKSPACE}/deploy/deploy-kube.yml --extra-vars \"env=qa build=\${BUILD_NUMBER}\""
             }		
         }
     }
