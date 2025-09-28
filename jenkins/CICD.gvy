@@ -34,20 +34,19 @@ pipeline {
             }			
         }
         stage('codecoverage') {
-            tools {
-                jdk 'java1.8'
-            }
-            steps {
-                // Step 4: Generate code coverage
-                echo 'codecoverage..'
-                sh script: '/opt/maven/bin/mvn cobertura:cobertura -Dcobertura.report.format=xml' // Fixed path
-            }
-            post {
-                success {
-                    cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'target/site/cobertura/coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false                  
-                }
-            }		
+    tools {
+        jdk 'java1.8'
+    }
+    steps {
+        echo 'codecoverage..'
+        sh script: '/opt/maven/bin/mvn verify' // Triggers jacoco:report from pom.xml
+    }
+    post {
+        success {
+            jacoco(execPattern: 'target/jacoco.exec', classPattern: 'target/classes', sourcePattern: 'src/main/java', exclusionPattern: 'src/test*')
         }
+    }		
+}
         stage('package/build-war') {
             steps {
                 // Step 5: Package the application
