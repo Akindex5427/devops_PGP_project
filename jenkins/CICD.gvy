@@ -5,7 +5,7 @@ pipeline {
 	         steps {
                 // step1 
                 echo 'compiling..'
-		            git url: 'https://github.com/lerndevops/samplejavaapp'
+		            git url: 'https://github.com/Akindex5427/devops_PGP_project'
 		            sh script: '/opt/maven/bin/mvn compile'
            }
         }
